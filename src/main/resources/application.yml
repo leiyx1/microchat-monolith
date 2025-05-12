@@ -1,0 +1,38 @@
+server:
+  port: ${SERVER_PORT}
+websocket:
+  port: ${WEBSOCKET_PORT}
+microchat:
+  auth-url: ${AUTH_URL}
+spring:
+  application:
+    name: microchat-monolith
+  cloud:
+    openfeign:
+      oauth2:
+        enabled: true
+        clientRegistrationId: admin
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${AUTH_RESOURCE_ISSUER_URI}
+      client:
+        registration:
+          admin:
+            provider: kc
+            client-id: ${AUTH_CLIENT_ID}
+            client-secret: ${AUTH_CLIENT_SECRET}
+            authorization-grant-type: client_credentials
+        provider:
+          kc:
+            issuer-uri: ${AUTH_CLIENT_ISSUER_URI}
+  datasource:
+    url: ${DATASOURCE_URI}
+    username: ${DATASOURCE_USERNAME}
+    password: ${DATASOURCE_PASSWORD}
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
