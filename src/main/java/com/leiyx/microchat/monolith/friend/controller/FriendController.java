@@ -1,21 +1,33 @@
 package com.leiyx.microchat.monolith.friend.controller;
 
-import com.leiyx.microchat.monolith.auth.config.CurrentUserId;
-import com.leiyx.microchat.monolith.friend.entity.User;
-import com.leiyx.microchat.monolith.friend.exception.UserNotFoundException;
-import com.leiyx.microchat.monolith.auth.service.AuthService;
-import com.leiyx.microchat.monolith.friend.service.FriendService;
-import jakarta.transaction.Transactional;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import com.leiyx.microchat.monolith.auth.config.CurrentUserId;
+import com.leiyx.microchat.monolith.auth.service.AuthService;
+import com.leiyx.microchat.monolith.friend.dto.UserDTO;
+import com.leiyx.microchat.monolith.friend.entity.User;
+import com.leiyx.microchat.monolith.friend.exception.UserNotFoundException;
+import com.leiyx.microchat.monolith.friend.service.FriendService;
+
+import jakarta.transaction.Transactional;
 
 @RestController
 @CrossOrigin
@@ -148,5 +160,14 @@ public class FriendController {
         } else {
             return ResponseEntity.notFound().build();
         }
+    }
+
+    @GetMapping(value = "users/{username}")
+    public ResponseEntity<?> getUsersByUsername(@PathVariable String username) {
+        List<User> users = authService.getUsersByUsername(Map.of("username", username, "exact", "true"));
+        List<UserDTO> userDTOs = users.stream()
+            .map(UserDTO::fromUser)
+            .collect(Collectors.toList());
+        return ResponseEntity.ok(userDTOs);
     }
 }
