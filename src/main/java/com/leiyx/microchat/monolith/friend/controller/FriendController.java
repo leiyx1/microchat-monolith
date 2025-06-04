@@ -130,11 +130,11 @@ public class FriendController {
     }
 
 
-    @DeleteMapping(value = "friend_request/{requestId}")
+    @DeleteMapping(value = "friend_requests/{requestId}")
     public ResponseEntity<?> declineFriendRequest(
-            @RequestParam UUID username,
+            @CurrentUserId UUID userId,
             @PathVariable UUID requestId) {
-        if (friendService.declineFriendRequest(username, requestId)) {
+        if (friendService.declineFriendRequest(userId, requestId)) {
             return ResponseEntity.noContent().build();
         } else {
             return ResponseEntity.notFound().build();
