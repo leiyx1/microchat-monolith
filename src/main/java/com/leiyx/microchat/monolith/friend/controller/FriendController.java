@@ -2,6 +2,7 @@ package com.leiyx.microchat.monolith.friend.controller;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -22,7 +23,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.leiyx.microchat.monolith.auth.config.CurrentUserId;
 import com.leiyx.microchat.monolith.auth.service.AuthService;
+import com.leiyx.microchat.monolith.friend.dto.FriendRequestDTO;
 import com.leiyx.microchat.monolith.friend.dto.UserDTO;
+import com.leiyx.microchat.monolith.friend.entity.FriendRequest;
 import com.leiyx.microchat.monolith.friend.entity.User;
 import com.leiyx.microchat.monolith.friend.exception.UserNotFoundException;
 import com.leiyx.microchat.monolith.friend.service.FriendService;
@@ -50,6 +53,14 @@ public class FriendController {
         if (users.isEmpty())
             throw new UserNotFoundException();
         return users.get(0).getId();
+    }
+    
+    private User getUserById(UUID id) {
+        Optional<User> user = authService.getUserById(id);
+        if (user.isEmpty())
+            throw new UserNotFoundException();
+        else
+            return user.get();
     }
 
     @GetMapping(value = "friends")
@@ -95,9 +106,16 @@ public class FriendController {
     }
 
     @GetMapping(value = "friend_requests")
-    public ResponseEntity<?> getFriendRequests(
-            @CurrentUserId UUID userId) {
-        return ResponseEntity.ok(friendService.getFriendRequests(userId));
+    public ResponseEntity<?> getFriendRequests(@CurrentUserId UUID userId) {
+        List<FriendRequest> requests = friendService.getFriendRequests(userId);
+        List<FriendRequestDTO> dtos = requests.stream()
+            .map(request -> {
+                User sender = getUserById(request.getSenderId());
+                User receiver = getUserById(request.getReceiverId());
+                return FriendRequestDTO.fromRequest(request, sender, receiver);
+            })
+            .collect(Collectors.toList());
+        return ResponseEntity.ok(dtos);
     }
 
     @PatchMapping(value = "friend_requests/{requestId}")

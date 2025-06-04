@@ -1,21 +1,22 @@
 package com.leiyx.microchat.monolith.friend.service.impl;
 
-import com.leiyx.microchat.monolith.friend.dao.BlockRepository;
-import com.leiyx.microchat.monolith.friend.dao.FriendRequestRepository;
-import com.leiyx.microchat.monolith.friend.dao.FriendshipRepository;
-import com.leiyx.microchat.monolith.friend.entity.FriendRequestStatus;
-import com.leiyx.microchat.monolith.friend.entity.User;
-import com.leiyx.microchat.monolith.friend.entity.Friendship;
-import com.leiyx.microchat.monolith.friend.entity.FriendRequest;
-import com.leiyx.microchat.monolith.friend.entity.Block;
-import com.leiyx.microchat.monolith.auth.service.AuthService;
-import com.leiyx.microchat.monolith.friend.service.FriendService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.leiyx.microchat.monolith.auth.service.AuthService;
+import com.leiyx.microchat.monolith.friend.dao.BlockRepository;
+import com.leiyx.microchat.monolith.friend.dao.FriendRequestRepository;
+import com.leiyx.microchat.monolith.friend.dao.FriendshipRepository;
+import com.leiyx.microchat.monolith.friend.entity.Block;
+import com.leiyx.microchat.monolith.friend.entity.FriendRequest;
+import com.leiyx.microchat.monolith.friend.entity.FriendRequestStatus;
+import com.leiyx.microchat.monolith.friend.entity.Friendship;
+import com.leiyx.microchat.monolith.friend.entity.User;
+import com.leiyx.microchat.monolith.friend.service.FriendService;
 
 @Service
 public class FriendServiceImpl implements FriendService {
@@ -78,7 +79,7 @@ public class FriendServiceImpl implements FriendService {
 
 
     public List<FriendRequest> getFriendRequests(UUID userId) {
-        return friendRequestRepository.getByReceiverId(userId);
+        return friendRequestRepository.getAllRequestsByUserId(userId);
     }
 
     public boolean acceptFriendRequest(UUID userId, UUID requestId) {
